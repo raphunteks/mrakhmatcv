@@ -572,7 +572,7 @@
         function bukaLoginAdmin() { document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-login').classList.remove('hidden'); document.getElementById('admin-dashboard').classList.add('hidden'); }
         function tutupAdmin() { document.getElementById('admin-modal').classList.add('hidden'); }
         function cekLogin() {
-            if(document.getElementById('adminUser').value === 'axaaxyz_01' && document.getElementById('adminPass').value === 'axaxyz999') {
+            if(document.getElementById('adminUser').value === 'mrakhmat' && document.getElementById('adminPass').value === 'mrakhmat999') {
                 document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.remove('hidden');
                 document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
             } else { document.getElementById('loginErr').classList.remove('hidden'); }
