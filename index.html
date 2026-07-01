@@ -210,12 +210,10 @@
                         <div class="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-[#2dd4bf] group-hover:bg-[#2dd4bf]/10 transition-colors"><i class="ph ph-whatsapp-logo text-xl"></i></div>
                         <div><p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">WhatsApp</p><div class="font-medium" id="ui-hp-container">...</div></div>
                     </div>
-                    <!-- MENU SOSIAL MEDIA YANG SEBELUMNYA HILANG -->
                     <div class="group flex items-start gap-4">
                         <div class="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-pink-400 group-hover:bg-pink-400/10 transition-colors"><i class="ph ph-instagram-logo text-xl"></i></div>
                         <div><p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Sosial Media</p><div class="font-medium" id="ui-sosmed-container">...</div></div>
                     </div>
-                    <!-- ======================================= -->
                     <div class="group flex items-start gap-4">
                         <div class="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-red-400 group-hover:bg-red-400/10 transition-colors"><i class="ph ph-map-pin text-xl"></i></div>
                         <div><p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Alamat Domisili</p><p class="text-slate-300 leading-relaxed" id="ui-alamat">...</p></div>
@@ -388,6 +386,10 @@
         // API URL (SESUAI REQUEST)
         const GAS_URL = "https://script.google.com/macros/s/AKfycbycc-ZsQDXTzQ4U3nut9C8C-VwTLFlqQzRZm81Nwn9NM-FFNP3tQoiX9ythx6o_NM8b/exec";
         let globalCVData = {}; 
+        
+        // VARIABEL SESI LOGIN (SOLUSI BUG UNAUTHORIZED)
+        let sessionUser = "";
+        let sessionPass = "";
 
         document.addEventListener("DOMContentLoaded", () => {
             fetch(GAS_URL + "?endpoint=cv", { redirect: "follow" })
@@ -475,7 +477,7 @@
             document.getElementById('ui-email-container').innerHTML = `<a href="mailto:${rawEmail}" class="link-hover">${rawEmail}</a>`;
             document.getElementById('ui-hp-container').innerHTML = `<a href="https://wa.me/${cleanHp}" target="_blank" class="link-hover">${rawHp}</a>`;
             
-            // JAVASCRIPT UNTUK MENAMPILKAN SOSIAL MEDIA (Perbaikan Bug Sebelumnya)
+            // JAVASCRIPT UNTUK MENAMPILKAN SOSIAL MEDIA
             document.getElementById('ui-sosmed-container').innerHTML = `<a href="https://www.instagram.com/${cleanIg}" target="_blank" class="link-hover">${rawSosmed}</a>`;
             
             document.getElementById('ui-alamat').textContent = data.kontak.alamat;
@@ -571,34 +573,61 @@
         // SISTEM DASHBOARD ADMIN
         function bukaLoginAdmin() { document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-login').classList.remove('hidden'); document.getElementById('admin-dashboard').classList.add('hidden'); }
         function tutupAdmin() { document.getElementById('admin-modal').classList.add('hidden'); }
+        
+        // FUNGSI CEK LOGIN - MEMPERBAIKI BUG UNAUTHORIZED DENGAN MENYIMPAN KREDENSIAL KE SESSION
         function cekLogin() {
-            if(document.getElementById('adminUser').value === 'mrakhmat' && document.getElementById('adminPass').value === 'mrakhmat999') {
-                document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.remove('hidden');
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+            
+            if(u === 'axaaxyz_01' && p === 'axaxyz999') {
+                sessionUser = u;
+                sessionPass = p;
+                
+                document.getElementById('admin-login').classList.add('hidden'); 
+                document.getElementById('admin-dashboard').classList.remove('hidden');
                 document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
-            } else { document.getElementById('loginErr').classList.remove('hidden'); }
+                document.getElementById('loginErr').classList.add('hidden');
+            } else { 
+                document.getElementById('loginErr').classList.remove('hidden'); 
+            }
         }
+        
         function simpanCV() {
             const btn = document.getElementById('btnSimpanCV'); const notif = document.getElementById('adminNotif');
-            let newData; try { newData = JSON.parse(document.getElementById('jsonEditor').value); } catch(e) { alert("Format JSON tidak valid!"); return; }
+            let newData; 
+            try { newData = JSON.parse(document.getElementById('jsonEditor').value); } 
+            catch(e) { alert("Format JSON tidak valid! Pastikan koma dan tanda kutip benar."); return; }
+            
             btn.disabled = true; btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin mr-1"></i> Processing...'; notif.classList.add('hidden');
-            const payload = { action: 'updateCV', user: document.getElementById('adminUser').value, pass: document.getElementById('adminPass').value, newData: newData };
+            
+            // MENGGUNAKAN VARIABEL SESSION AGAR MENGHINDARI BUG INPUT KOSONG SAAT PUSH
+            const payload = { action: 'updateCV', user: sessionUser, pass: sessionPass, newData: newData };
 
             fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    notif.textContent = "Data Synced Successfully! (F5)";
-                    notif.classList.remove('hidden', 'bg-red-500/20', 'text-red-400'); notif.classList.add('bg-green-500/20', 'text-green-400');
+                    notif.innerHTML = "<i class='ph-fill ph-check-circle'></i> Data Realtime Updated!";
+                    notif.classList.remove('hidden', 'bg-red-500/20', 'text-red-400'); 
+                    notif.classList.add('bg-green-500/20', 'text-green-400');
                     globalCVData = newData; 
+                    
+                    // REALTIME UPDATE UI TANPA REFRESH
+                    renderSeluruhUI(globalCVData);
                 } else {
                     notif.textContent = "Error: " + res.message;
-                    notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-400'); notif.classList.add('bg-red-500/20', 'text-red-400');
+                    notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-400'); 
+                    notif.classList.add('bg-red-500/20', 'text-red-400');
                 }
             })
             .catch(err => {
                 notif.textContent = "Connection Timeout.";
-                notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-400'); notif.classList.add('bg-red-500/20', 'text-red-400');
-            }).finally(() => { btn.disabled = false; btn.innerHTML = '<i class="ph-fill ph-cloud-arrow-up text-lg"></i> Push Update'; });
+                notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-400'); 
+                notif.classList.add('bg-red-500/20', 'text-red-400');
+            }).finally(() => { 
+                btn.disabled = false; 
+                btn.innerHTML = '<i class="ph-fill ph-cloud-arrow-up text-lg"></i> Push Update'; 
+            });
         }
     </script>
 </body>
