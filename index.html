@@ -494,7 +494,7 @@
             }).join('');
             document.getElementById('ui-keahlian-container').innerHTML = keahlianHTML;
 
-            // UI PENGALAMAN KERJA (NEW DESIGN)
+            // UI PENGALAMAN KERJA (NEW DESIGN - MENAMPILKAN SEMUA DATA ARRAY JSON)
             const pengHTML = (data.pengalamanKerja || []).map((p, i) => {
                 const delay = i * 100;
                 return `<div class="premium-card p-6 border-l-4 border-l-[#00E5FF] group animate-on-scroll" style="transition-delay: ${delay}ms;"><div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#00E5FF]/10 to-transparent rounded-bl-full transition-opacity duration-500 opacity-50 group-hover:opacity-100 pointer-events-none"></div><div class="relative z-10"><span class="inline-block bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/20 text-[10px] uppercase font-bold tracking-widest px-3 py-1 rounded-full mb-3">${p.tahun}</span><h3 class="text-lg font-extrabold text-white group-hover:text-[#00E5FF] transition-colors leading-tight mb-2">${p.posisi}</h3><p class="text-slate-400 text-sm font-medium"><i class="ph-fill ph-buildings text-slate-500 mr-1.5"></i> ${p.institusi}</p></div></div>`;
@@ -512,7 +512,7 @@
             }).join('');
             document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
 
-            // UI ORGANISASI (NEW DESIGN)
+            // UI ORGANISASI (NEW DESIGN - MENAMPILKAN SEMUA DATA ARRAY JSON)
             const orgHTML = data.organisasi.map(o => {
                 const iconColor = o.aktif ? "text-[#00E5FF]" : "text-slate-600";
                 const bgIcon = o.aktif ? "bg-[#00E5FF]/10 border border-[#00E5FF]/20" : "bg-slate-800 border border-slate-700";
