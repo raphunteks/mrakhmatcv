@@ -210,6 +210,12 @@
                         <div class="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-[#2dd4bf] group-hover:bg-[#2dd4bf]/10 transition-colors"><i class="ph ph-whatsapp-logo text-xl"></i></div>
                         <div><p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">WhatsApp</p><div class="font-medium" id="ui-hp-container">...</div></div>
                     </div>
+                    <!-- MENU SOSIAL MEDIA YANG SEBELUMNYA HILANG -->
+                    <div class="group flex items-start gap-4">
+                        <div class="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-pink-400 group-hover:bg-pink-400/10 transition-colors"><i class="ph ph-instagram-logo text-xl"></i></div>
+                        <div><p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Sosial Media</p><div class="font-medium" id="ui-sosmed-container">...</div></div>
+                    </div>
+                    <!-- ======================================= -->
                     <div class="group flex items-start gap-4">
                         <div class="p-2 bg-white/5 rounded-lg text-slate-400 group-hover:text-red-400 group-hover:bg-red-400/10 transition-colors"><i class="ph ph-map-pin text-xl"></i></div>
                         <div><p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Alamat Domisili</p><p class="text-slate-300 leading-relaxed" id="ui-alamat">...</p></div>
@@ -462,12 +468,16 @@
             // UI KONTAK
             const rawEmail = data.kontak.email;
             const rawHp = data.kontak.hp;
-            const rawSosmed = data.kontak.sosmed;
+            const rawSosmed = data.kontak.sosmed; // Variabel Sosmed dipanggil kembali
             let cleanHp = rawHp.replace(/\D/g, ''); if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
             let cleanIg = rawSosmed.replace(/[@ ]/g, '').split('/')[0]; 
 
             document.getElementById('ui-email-container').innerHTML = `<a href="mailto:${rawEmail}" class="link-hover">${rawEmail}</a>`;
             document.getElementById('ui-hp-container').innerHTML = `<a href="https://wa.me/${cleanHp}" target="_blank" class="link-hover">${rawHp}</a>`;
+            
+            // JAVASCRIPT UNTUK MENAMPILKAN SOSIAL MEDIA (Perbaikan Bug Sebelumnya)
+            document.getElementById('ui-sosmed-container').innerHTML = `<a href="https://www.instagram.com/${cleanIg}" target="_blank" class="link-hover">${rawSosmed}</a>`;
+            
             document.getElementById('ui-alamat').textContent = data.kontak.alamat;
             document.getElementById('ui-scholar').href = data.kontak.scholar;
             document.getElementById('ui-orcid').href = data.kontak.orcid;
