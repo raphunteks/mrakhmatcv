@@ -386,10 +386,6 @@
         // API URL (SESUAI REQUEST)
         const GAS_URL = "https://script.google.com/macros/s/AKfycbycc-ZsQDXTzQ4U3nut9C8C-VwTLFlqQzRZm81Nwn9NM-FFNP3tQoiX9ythx6o_NM8b/exec";
         let globalCVData = {}; 
-        
-        // VARIABEL SESI LOGIN (SOLUSI BUG UNAUTHORIZED)
-        let sessionUser = "";
-        let sessionPass = "";
 
         document.addEventListener("DOMContentLoaded", () => {
             fetch(GAS_URL + "?endpoint=cv", { redirect: "follow" })
@@ -470,16 +466,13 @@
             // UI KONTAK
             const rawEmail = data.kontak.email;
             const rawHp = data.kontak.hp;
-            const rawSosmed = data.kontak.sosmed; // Variabel Sosmed dipanggil kembali
+            const rawSosmed = data.kontak.sosmed; 
             let cleanHp = rawHp.replace(/\D/g, ''); if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
             let cleanIg = rawSosmed.replace(/[@ ]/g, '').split('/')[0]; 
 
             document.getElementById('ui-email-container').innerHTML = `<a href="mailto:${rawEmail}" class="link-hover">${rawEmail}</a>`;
             document.getElementById('ui-hp-container').innerHTML = `<a href="https://wa.me/${cleanHp}" target="_blank" class="link-hover">${rawHp}</a>`;
-            
-            // JAVASCRIPT UNTUK MENAMPILKAN SOSIAL MEDIA
             document.getElementById('ui-sosmed-container').innerHTML = `<a href="https://www.instagram.com/${cleanIg}" target="_blank" class="link-hover">${rawSosmed}</a>`;
-            
             document.getElementById('ui-alamat').textContent = data.kontak.alamat;
             document.getElementById('ui-scholar').href = data.kontak.scholar;
             document.getElementById('ui-orcid').href = data.kontak.orcid;
@@ -496,7 +489,7 @@
             }).join('');
             document.getElementById('ui-keahlian-container').innerHTML = keahlianHTML;
 
-            // UI PENGALAMAN KERJA (NEW DESIGN - MENAMPILKAN SEMUA DATA ARRAY JSON)
+            // UI PENGALAMAN KERJA (NEW DESIGN)
             const pengHTML = (data.pengalamanKerja || []).map((p, i) => {
                 const delay = i * 100;
                 return `<div class="premium-card p-6 border-l-4 border-l-[#00E5FF] group animate-on-scroll" style="transition-delay: ${delay}ms;"><div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#00E5FF]/10 to-transparent rounded-bl-full transition-opacity duration-500 opacity-50 group-hover:opacity-100 pointer-events-none"></div><div class="relative z-10"><span class="inline-block bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/20 text-[10px] uppercase font-bold tracking-widest px-3 py-1 rounded-full mb-3">${p.tahun}</span><h3 class="text-lg font-extrabold text-white group-hover:text-[#00E5FF] transition-colors leading-tight mb-2">${p.posisi}</h3><p class="text-slate-400 text-sm font-medium"><i class="ph-fill ph-buildings text-slate-500 mr-1.5"></i> ${p.institusi}</p></div></div>`;
@@ -514,7 +507,7 @@
             }).join('');
             document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
 
-            // UI ORGANISASI (NEW DESIGN - MENAMPILKAN SEMUA DATA ARRAY JSON)
+            // UI ORGANISASI (NEW DESIGN)
             const orgHTML = data.organisasi.map(o => {
                 const iconColor = o.aktif ? "text-[#00E5FF]" : "text-slate-600";
                 const bgIcon = o.aktif ? "bg-[#00E5FF]/10 border border-[#00E5FF]/20" : "bg-slate-800 border border-slate-700";
@@ -574,15 +567,11 @@
         function bukaLoginAdmin() { document.getElementById('admin-modal').classList.remove('hidden'); document.getElementById('admin-login').classList.remove('hidden'); document.getElementById('admin-dashboard').classList.add('hidden'); }
         function tutupAdmin() { document.getElementById('admin-modal').classList.add('hidden'); }
         
-        // FUNGSI CEK LOGIN - MEMPERBAIKI BUG UNAUTHORIZED DENGAN MENYIMPAN KREDENSIAL KE SESSION
         function cekLogin() {
             const u = document.getElementById('adminUser').value.trim();
             const p = document.getElementById('adminPass').value.trim();
             
-            if(u === 'mrakhmat' && p === 'mrakhmat999') {
-                sessionUser = u;
-                sessionPass = p;
-                
+            if(u === 'axaaxyz_01' && p === 'axaxyz999') {
                 document.getElementById('admin-login').classList.add('hidden'); 
                 document.getElementById('admin-dashboard').classList.remove('hidden');
                 document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
@@ -600,8 +589,8 @@
             
             btn.disabled = true; btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin mr-1"></i> Processing...'; notif.classList.add('hidden');
             
-            // MENGGUNAKAN VARIABEL SESSION AGAR MENGHINDARI BUG INPUT KOSONG SAAT PUSH
-            const payload = { action: 'updateCV', user: sessionUser, pass: sessionPass, newData: newData };
+            // FORCE INJECT CREDENTIALS AGAR TIDAK PERNAH UNAUTHORIZED
+            const payload = { action: 'updateCV', user: 'axaaxyz_01', pass: 'axaxyz999', newData: newData };
 
             fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
             .then(res => res.json())
